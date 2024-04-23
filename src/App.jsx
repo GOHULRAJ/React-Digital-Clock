@@ -1,33 +1,44 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useState } from 'react'
+
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
 
+
+function App() {
+  const [currentTime, setCurrentTime] = useState(new Date())
+
+  useEffect(()=>{
+    const timer=setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return ()=>clearInterval(timer)
+  },[])
+
+  const formatTimeWithZero=(num)=>{
+    return num<10? `0${num}`:num;
+  }
+
+  const formatHour=(hour)=>{
+    return hour===0?12:hour>12?hour-12:hour;
+  }
+
+  const formatDate=(date)=>{
+    const option={weekday:"long",year:"numeric",month:"long",day:"numeric"}
+    return date.toLocaleDateString(undefined,option)
+  }
+  
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+        <div className="digital-clock">
+          <h1>Digital Clock</h1>
+          <div className="time">
+              {formatTimeWithZero(formatHour(currentTime.getHours()))}:
+              {formatTimeWithZero(currentTime.getMinutes())}:
+              {formatTimeWithZero(currentTime.getSeconds())}:
+              {formatTimeWithZero(currentTime.getHours()>=12?"PM":"AM")}
+          </div> 
+          <div className="date">{formatDate(currentTime)}</div>
+        </div>
     </>
   )
 }
